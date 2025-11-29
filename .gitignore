@@ -93,6 +93,7 @@ examples/avoid_walls/avoid_walls
 examples/vicsek/vicsek
 examples/vicsek-autocal/vicsek-autocal
 examples/toner-tu/toner-tu
+examples/moving_partition/moving_partition
 
 # Apptainer
 *.sif
