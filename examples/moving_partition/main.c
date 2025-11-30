@@ -41,7 +41,6 @@ static float field_diffusion_alpha = 0.40f;   /* [1/s], local averaging strength
 static float field_reaction_beta   = 1.0f;   /* [1/s], pushes |field| toward 1     */
 static float field_global_gamma    = 2.5f;   /* [1/s], global balancing strength   */
 
-static float flip_gain = 0.1f;
 
 
 /* ---  LED mode --- */
@@ -426,6 +425,7 @@ static void update_field(float dt) {
     mydata->field = clampf(phi, -1.0f, 1.0f);
 
 #if 0
+    float flip_gain = 0.1f;
     float p_flip = flip_gain * fabsf(imbalance) * dt;  // e.g. flip_gain ~ 0.1–0.5
 
     if (p_flip > 0.0f) {
