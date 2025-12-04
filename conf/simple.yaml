@@ -17,7 +17,7 @@ data_filename: "frames/data.feather"
 enable_console_logging: true
 console_filename: "frames/console.txt"
 save_data_period: 1.0       # In s, or -1 to disable data export (see also "enable_data_logging")
-save_video_period: 1.0      # In s, or -1 to disable frame export
+save_video_period: 0.1      # In s, or -1 to disable frame export
 frames_name: "frames/f{:010.4f}.png"
 
 seed: 0
@@ -30,7 +30,7 @@ show_light_levels: false            # In the GUI, can enabled/disabled using F6
 GUI: true
 
 # Time
-simulation_time: 5000.0    # In s
+simulation_time: 60.0    # In s
 time_step: 0.01            # In s
 GUI_speed_up: 10.0         # How much the visualisation in the GUI should be sped up
 
@@ -137,7 +137,7 @@ parameters:
 
     max_age: 3000
     led_mode: sign
-    moving_robots: false
+    moving_robots: true
 
 # MODELINE "{{{1
 # vim:expandtab:softtabstop=4:shiftwidth=4:fileencoding=utf-8
