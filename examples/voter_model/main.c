@@ -419,7 +419,7 @@ static void update_motion(uint32_t elapsed_ms) {
  * INITIALISATION
  * ============================================================================================== */
 
-static void user_init(void) {
+void user_init(void) {
     srand(pogobot_helper_getRandSeed());
     pogobot_infrared_set_power(2);
 
@@ -459,7 +459,7 @@ static void user_init(void) {
  * MAIN CONTROL LOOP
  * ============================================================================================== */
 
-static void user_step(void) {
+void user_step(void) {
     uint32_t now        = current_time_milliseconds();
     uint32_t elapsed_ms = now - mydata->last_step_ms;
     mydata->last_step_ms = now;

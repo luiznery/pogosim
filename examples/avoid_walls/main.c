@@ -258,7 +258,7 @@ static void execute_action(void) {
  * sets up the main loop frequency, and configures the initial state for the
  * run-and-tumble behavior.
  */
-static void user_init(void) {
+void user_init(void) {
 #ifndef SIMULATOR
     printf("setup ok\n");
 #endif
@@ -303,7 +303,7 @@ static void user_init(void) {
  *
  * This function is called continuously at the frequency defined in user_init().
  */
-static void user_step(void) {
+void user_step(void) {
     uint32_t tnow = current_time_milliseconds();
     update_lateral_leds(tnow);
     decide_action();
