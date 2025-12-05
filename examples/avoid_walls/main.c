@@ -122,6 +122,7 @@ static void process_message(message_t *mr) {
         mydata->last_wall_seen_ms[face] = t;
     }
     update_lateral_leds(t);
+    printf("Wall detected! State: %d %d %d %d\n", face_active(0, t), face_active(1, t), face_active(2, t), face_active(3, t));
 }
 
 
