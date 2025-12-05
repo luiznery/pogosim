@@ -19,7 +19,7 @@ static inline void recompute_speeds(void) {
     forward_speed = (uint16_t)((float)motorFull * forward_speed_ratio);
 }
 
-uint32_t wall_memory_ms = 300;        // How long wall detection persists (short to avoid spinning)
+uint32_t wall_memory_ms = 100;        // How long wall detection persists (short to avoid spinning)
 uint32_t turn_duration_ms = 300;      // How long to execute a turn (long enough to clear wall angle)
 uint32_t forward_commit_ms = 1000;    // Move forward after turn for this long
 
