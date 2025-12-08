@@ -1020,6 +1020,20 @@ void msleep(int milliseconds);
 void pogosim_printf(const char* format, ...);
 int pogosim_putchar(int ch);
 
+/** (get_nb_robots)
+ * Returns the number of robots in the simulation
+ *
+ * # Return
+ * the number of robots in the simulation
+ *
+ */
+uint32_t get_nb_robots(void);
+
+/** (stop_simulation)
+ * Stops the simulation
+ *
+ */
+void stop_simulation(void);
 
 void data_add_column_int8(char const* name);
 void data_add_column_int16(char const* name);

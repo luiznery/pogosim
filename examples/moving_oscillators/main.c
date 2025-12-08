@@ -49,6 +49,12 @@ static led_mode_t led_mode_enum = LED_MODE_SIGN;
 #define MAX_NEIGHBORS       20U
 #define IR_RANGE_MAX_AGE    200U    /* [ms] keep neighbour for coupling this long               */
 
+#ifdef SIMULATOR
+// Global counter of robots showing a red LED color. Used by global_step() to check if the swarm has converged. If so, the simulation should be stopped
+static uint32_t red_LED_counter = 0;
+#endif
+
+
 /* ================================================================================================
  * ENUM & STRUCTS
  * ============================================================================================== */
@@ -276,6 +282,12 @@ static void update_phase(float dt) {
         mydata->period_est = 0.8f * mydata->period_est + 0.2f * (now - mydata->last_cross_time);
         mydata->last_cross_time = now;
     }
+
+#ifdef SIMULATOR
+    // Update global counter
+    bool positive = (sinf(mydata->theta) >= 0.0f);
+    if (positive) red_LED_counter++;
+#endif
 }
 
 /* ================================================================================================
@@ -425,6 +437,29 @@ static void global_setup(void) {
     init_from_configuration(move_to_osc_gain);
 }
 
+
+/**
+ * @brief Optional global-step callback called each simulator tick.
+ *
+ * Used here to check if all robots show the same LED color in a given time-step (swarm has converged).
+ * If this is the case, stop the simulation.
+ */
+static void global_step(void) {
+    uint32_t nb_robots = get_nb_robots();
+    float ratio_red_LED = (float)red_LED_counter / nb_robots;
+
+    if (ratio_red_LED > 0.95) {
+        // No convergence yet.
+        red_LED_counter = 0;
+        return;
+    }
+
+    // Swarm has converged, stop the simulation
+    stop_simulation();
+}
+
+
+
 static void create_data_schema(void) {
     data_add_column_double("theta");
     data_add_column_int8("nb_neighbors");
@@ -442,13 +477,12 @@ static void export_data(void) {
 
 int main(void) {
     pogobot_init();
-
     pogobot_start(user_init, user_step);
-#ifdef SIMULATOR
+
     SET_CALLBACK(callback_global_setup,       global_setup);
+    SET_CALLBACK(callback_global_step,        global_step);
     SET_CALLBACK(callback_create_data_schema, create_data_schema);
     SET_CALLBACK(callback_export_data,        export_data);
-#endif
     return 0;
 }
 

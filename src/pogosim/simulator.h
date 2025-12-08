@@ -302,6 +302,11 @@ public:
     void main_loop();
 
     /**
+     * @brief Stops the main simulation loop.
+     */
+    void stop_simulation_main_loop();
+
+    /**
      * @brief Deletes old data files.
      *
      * Deletes files with a specified extension from the frames directory if configured to do so.
@@ -348,6 +353,13 @@ public:
      *
      */
     void apply_periodic_wrapping();
+
+    /**
+     * @brief Returns the number of robots in the simulation.
+     *
+     * @return Number of robots
+     */
+    uint32_t get_nb_robots() const { return robots.size(); }
 
 };
 

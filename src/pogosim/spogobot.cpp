@@ -526,6 +526,15 @@ int pogosim_putchar(int ch) {
     return ch;
 }
 
+
+uint32_t get_nb_robots(void) {
+    return simulation->get_nb_robots();
+}
+
+void stop_simulation(void) {
+    simulation->stop_simulation_main_loop();
+}
+
 void enable_data_export(void) {
     simulation->current_robot_enable_data_logging = true;
 }

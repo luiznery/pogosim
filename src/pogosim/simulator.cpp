@@ -696,7 +696,7 @@ void Simulation::handle_SDL_events() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            running = false;
+            stop_simulation_main_loop();
 
         } else if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
             switch (event.key.keysym.sym) {
@@ -730,7 +730,7 @@ void Simulation::handle_SDL_events() {
                     show_scale_bar = !show_scale_bar;
                     break;
                 case SDLK_ESCAPE:
-                    running = false;
+                    stop_simulation_main_loop();
                     break;
                 case SDLK_SPACE:
                     pause();
@@ -1156,6 +1156,11 @@ void Simulation::main_loop() {
     if (progress_bar) {
         tqdmrange.end();
     }
+}
+
+
+void Simulation::stop_simulation_main_loop() {
+    running = false;
 }
 
 void Simulation::delete_old_data() {
