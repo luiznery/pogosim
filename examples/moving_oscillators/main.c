@@ -448,13 +448,14 @@ static void global_step(void) {
     uint32_t nb_robots = get_nb_robots();
     float ratio_red_LED = (float)red_LED_counter / nb_robots;
 
-    if (ratio_red_LED > 0.95) {
+    if (ratio_red_LED <= 0.95) {
         // No convergence yet.
         red_LED_counter = 0;
         return;
     }
 
     // Swarm has converged, stop the simulation
+    printf("Swarm has converged: >95%% of robots are synchronized with each other.\n");
     stop_simulation();
 }
 
