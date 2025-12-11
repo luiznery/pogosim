@@ -16,6 +16,9 @@ From: ubuntu:22.04
     export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
     export PATH="/usr/local/bin:$PATH:/pogobot-sdk/tools/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin"
     export NPROC=$(  grep -i "^processor" /proc/cpuinfo | wc -l )
+    export POGO_SDK=/pogobot-sdk
+    export POGOSIM_INCLUDE_DIR=/opt/pogosim/src
+    export POGOSIM_SRC_DIR=/opt/pogosim/src/pogosim
 
 %files
     # Copy project source files to the container
