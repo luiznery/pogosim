@@ -97,6 +97,7 @@ examples/moving_partition/moving_partition
 examples/Axelrod_cultural_dissemination/Axelrod_cultural_dissemination
 examples/voter_model/voter_model
 examples/naming_game/naming_game
+examples/probes/probes
 
 # Apptainer
 *.sif
