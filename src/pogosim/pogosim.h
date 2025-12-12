@@ -127,7 +127,11 @@ void _pogobot_start(void (*user_init)(void), void (*user_step)(void), const char
 
 void _pogobot_start(void (*user_init)(void), void (*user_step)(void));
 #define pogobot_start_2(user_init, user_step) \
-    _pogobot_start((user_init), (user_step))
+    do { \
+        if (current_robot_category_is("robots")) { \
+            _pogobot_start((user_init), (user_step)); \
+        } \
+    } while (0)
 
 #define pogobot_start_3(user_init, user_step, object_category) \
     do { \
