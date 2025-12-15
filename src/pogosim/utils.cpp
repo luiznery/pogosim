@@ -16,7 +16,7 @@ std::random_device rd;
 std::mt19937 rnd_gen(rd());
 
 
-void init_logger() {
+void init_logger(Configuration& config) {
 //    // Create a console logger with color support
 //    glogger = spdlog::stdout_color_mt("console");
 //    glogger->set_level(spdlog::level::info); // Set default log level
@@ -24,7 +24,14 @@ void init_logger() {
 
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::info);
-    console_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    std::string const log_format_str = config["log_format"].get(std::string("default"));
+    if (log_format_str == "default" || log_format_str == "date" || log_format_str == "null") {
+        console_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    } else if (log_format_str == "minimal") {
+        console_sink->set_pattern("%v");
+    } else {
+        throw std::runtime_error("Unknown value of 'log_format'. Use either 'default' or 'minimal'.");
+    }
 
     std::vector<spdlog::sink_ptr> sinks{console_sink};
     glogger     = std::make_shared<spdlog::logger>("global", sinks.begin(), sinks.end());

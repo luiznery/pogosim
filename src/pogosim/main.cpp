@@ -81,8 +81,29 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Init logging
-    init_logger();
+    Configuration config;
+    try {
+        // Load configuration
+        config.load(config_file);
+        // Init logging
+        init_logger(config);
+        if (verbose) {
+            glogger->info("Loaded configuration from: {}", config_file);
+        }
+
+        // Display configuration
+        if (verbose)
+            glogger->debug(config.summary());
+    } catch (const std::exception& e) {
+        std::cerr << "Unable to create configuration. Error: " << e.what() << std::endl;
+        return 1;
+    }
+
+    if (gui) {
+        glogger->info("GUI enabled.");
+    }
+    config.set("GUI", gui ? "true" : "false");
+    config.set("progress_bar", progress ? "true" : "false");
 
     if (quiet) {
         // Quiet mode, only output warnings and error on terminal
@@ -105,26 +126,7 @@ int main(int argc, char** argv) {
         robotlogger->sinks().clear();
     }
 
-    if (gui) {
-        glogger->info("GUI enabled.");
-    }
-
-    Configuration config;
     try {
-        // Load configuration
-        config.load(config_file);
-
-        if (verbose) {
-            glogger->info("Loaded configuration from: {}", config_file);
-        }
-
-        // Display configuration
-        if (verbose)
-            glogger->debug(config.summary());
-
-        config.set("GUI", gui ? "true" : "false");
-        config.set("progress_bar", progress ? "true" : "false");
-
         // Create the simulation object
         simulation = std::make_unique<Simulation>(config);
         simulation->init_all();
@@ -132,10 +134,9 @@ int main(int argc, char** argv) {
 
         // Launch simulation
         simulation->main_loop();
-
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
+        return 2;
     }
 
     return 0;

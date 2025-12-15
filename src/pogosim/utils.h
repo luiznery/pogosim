@@ -10,6 +10,8 @@
 #include <random>
 #include <algorithm>
 
+#include "configuration.h"
+
 #define _USE_MATH_DEFINES
 
 
@@ -80,7 +82,7 @@ template<typename T>
  * one for global logging (glogger) and one for robot-specific logging (robotlogger).
  * The log level for both loggers is set to info and a specific log message format is defined.
  */
-void init_logger();
+void init_logger(Configuration& config);
 
 /**
  * @brief Adds a file sink to the global loggers.
