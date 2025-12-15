@@ -7,6 +7,24 @@
 //  make clean bin                           # To compile the "robots" category
 //     OR:
 //  ROBOT_CATEGORY=probes make clean bin     # To compile the "probes" category
+//
+// To export the output logs from the console to a dataframe file (.csv or .feather):
+//   ./examples/probes/probes -c conf/probes.yaml | tee /dev/stderr | ./examples/probes/to_dataframe.py -o test.feather
+// Or, on real robots:
+//   make connect TTY=/dev/ttyUSB0 | tee /dev/stderr | ./to_dataframe.py -o test.feather
+// /!\  /!\  Note that if the file already exists, the new logs will be merged with the existing data.
+//  If you don't want this behavior, remove the file before launching this command.
+//
+//  Alternative, if you want to save a file of the logs:
+//    make connect TTY=/dev/ttyUSB0 | tee your_experimental_log_file.txt
+//    ./to_dataframe.py -o test.feather your_experimental_log_file.txt
+//
+// Then, to load this file in python using pandas:
+//   import pandas as pd
+//   # For feather files:
+//   df = pd.read_feather("test.feather").set_index("t_ms").sort_index()
+//   # OR, for csv files
+//   df = pd.read_csv("test.csv", index_col="t_ms")
 
 // Main include for pogobots, both for real robots and for simulations
 #include "pogobase.h"
@@ -95,7 +113,7 @@ _Static_assert((LOG_CHUNK_DATA_BYTES % ROBOT_LOG_ENTRY_BYTES) == 0u,
 _Static_assert((LOG_HEADER_BYTES + LOG_CHUNK_DATA_BYTES) <= LOG_MESSAGE_BYTES,
                "Log message header+data exceed LOG_MESSAGE_BYTES");
 
-// Probe-side: track partial (incomplete) entries without assuming robot IDs are dense.
+// Probe-side: track partial (incomplete) entries
 #define PROBE_PARTIAL_SLOTS  256u
 #define PROBE_RID_UNUSED     0xFFFFu
 
@@ -525,9 +543,9 @@ void probes_user_init(void) {
     }
 }
 
-static const char* phase_to_str(uint8_t p) {
-    return (p == PHASE_RUN) ? "RUN" : "TUMBLE";
-}
+//static const char* phase_to_str(uint8_t p) {
+//    return (p == PHASE_RUN) ? "RUN" : "TUMBLE";
+//}
 
 
 void probes_user_step(void) {
@@ -536,11 +554,17 @@ void probes_user_step(void) {
         uint16_t idx = mydata->probe_cache_tail;
         ProbeCacheEntry *e = &mydata->probe_cache[idx];
 
-        printf("PROBE %u: robot %u t=%lu ms state=%s (%u)\n",
+//        printf("PROBE %u: robot %u t=%lu ms state=%s (%u)\n",
+//               pogobot_helper_getid(),
+//               (unsigned int)e->rid,
+//               (unsigned long)e->t_ms,   // t_ms is a uint32_t in ms
+//               phase_to_str(e->phase),
+//               (unsigned int)e->phase);
+
+        printf("PROBE %u: robot=%u, t=%lu, state=%u\n",
                pogobot_helper_getid(),
                (unsigned int)e->rid,
                (unsigned long)e->t_ms,   // t_ms is a uint32_t in ms
-               phase_to_str(e->phase),
                (unsigned int)e->phase);
 
         mydata->probe_cache_tail  = (idx + 1) % PROBE_MAX_ENTRIES;
