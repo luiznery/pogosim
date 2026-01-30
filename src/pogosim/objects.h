@@ -1159,6 +1159,48 @@ Object* object_factory(Simulation* simulation, uint16_t id, float x, float y, b2
  */
 void get_cmap_val(std::string const name, uint8_t const value, uint8_t* r, uint8_t* g, uint8_t* b);
 
+
+class OrbitingStaticLightObject : public StaticLightObject {
+public:
+    OrbitingStaticLightObject(float x, float y,
+                              ObjectGeometry& geom,
+                              LightLevelMap* lmap,
+                              int16_t value,
+                              LightMode mode,
+                              int16_t edge_value,
+                              float gradient_radius,
+                              float plane_angle,
+                              float plane_half_span,
+                              float photo_start_at,
+                              float photo_start_duration,
+                              int16_t photo_start_value,
+                              // motion params
+                              float center_x,
+                              float center_y,
+                              float orbit_radius,
+                              float orbit_angular_speed,
+                              float orbit_phase,
+                              std::string const& category);
+
+    OrbitingStaticLightObject(Simulation* simulation, float x, float y,
+                              LightLevelMap* light_map,
+                              Configuration const& config,
+                              std::string const& category);
+
+    void launch_user_step(float t) override;
+
+private:
+    void parse_configuration(Configuration const& config, Simulation* simulation);
+
+    // motion
+    float center_x_ = 0.f;
+    float center_y_ = 0.f;
+    float orbit_radius_ = 0.f;
+    float orbit_angular_speed_ = 0.f; // rad/s
+    float orbit_phase_ = 0.f;         // rad
+    float start_t_ = NAN;
+};
+
 #endif
 
 

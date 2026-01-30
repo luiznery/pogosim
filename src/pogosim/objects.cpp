@@ -756,6 +756,77 @@ void StaticLightObject::launch_user_step(float t) {
     }
 }
 
+/************* OrbitingStaticLightObject *************/ // {{{1
+
+OrbitingStaticLightObject::OrbitingStaticLightObject(
+        float x, float y,
+        ObjectGeometry& geom,
+        LightLevelMap* lmap,
+        int16_t value,
+        LightMode mode,
+        int16_t edge_value,
+        float gradient_radius,
+        float plane_angle,
+        float plane_half_span,
+        float photo_start_at,
+        float photo_start_duration,
+        int16_t photo_start_value,
+        float center_x,
+        float center_y,
+        float orbit_radius,
+        float orbit_angular_speed,
+        float orbit_phase,
+        std::string const& category)
+    : StaticLightObject(x, y, geom, lmap,
+                        value, mode, edge_value, gradient_radius,
+                        plane_angle, plane_half_span,
+                        photo_start_at, photo_start_duration, photo_start_value,
+                        category),
+      center_x_(center_x),
+      center_y_(center_y),
+      orbit_radius_(orbit_radius),
+      orbit_angular_speed_(orbit_angular_speed),
+      orbit_phase_(orbit_phase) {}
+
+OrbitingStaticLightObject::OrbitingStaticLightObject(
+        Simulation* simulation, float x, float y,
+        LightLevelMap* light_map,
+        Configuration const& config,
+        std::string const& category)
+    : StaticLightObject(simulation, x, y, light_map, config, category) {
+
+    parse_configuration(config, simulation);
+
+    light_map->update();
+}
+
+void OrbitingStaticLightObject::parse_configuration(Configuration const& config,
+                                                    [[maybe_unused]] Simulation* simulation) {
+    center_x_ = config["center_x"].get(x);
+    center_y_ = config["center_y"].get(y);
+
+    orbit_radius_        = config["orbit_radius"].get(0.f);     // mm
+    orbit_angular_speed_ = config["orbit_angular_speed"].get(0.f); // rad/s
+    orbit_phase_         = config["orbit_phase"].get(0.f);      // rad
+}
+
+void OrbitingStaticLightObject::launch_user_step(float t) {
+    StaticLightObject::launch_user_step(t);
+
+    if (std::isnan(start_t_)) start_t_ = t;
+
+    if (orbit_radius_ <= 0.f || orbit_angular_speed_ == 0.f) return;
+
+    const float dt = t - start_t_;
+    const float a  = orbit_phase_ + orbit_angular_speed_ * dt;
+
+    x = center_x_ + orbit_radius_ * std::cos(a);
+    y = center_y_ + orbit_radius_ * std::sin(a);
+
+    light_map->update();
+}
+
+
 
 /************* RotatingRayOfLightObject *************/ // {{{1
 
@@ -1285,6 +1356,9 @@ Object* object_factory(Simulation* simulation, uint16_t id, float x, float y, b2
     if (type == "static_light") {
         res = new StaticLightObject(simulation, x, y, light_map, config, category);
 
+    } else if (type == "orbiting_static_light") {
+        res = new OrbitingStaticLightObject(simulation, x, y, light_map, config, category);
+    
     } else if (type == "rotating_ray_of_light") {
         res = new RotatingRayOfLightObject(simulation, x, y, light_map, config, category);
 
